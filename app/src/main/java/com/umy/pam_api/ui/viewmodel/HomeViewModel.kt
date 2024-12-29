@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import coil.network.HttpException
 import com.umy.pam_api.model.Mahasiswa
 import com.umy.pam_api.repository.MahasiswaRepository
+import kotlinx.coroutines.launch
 import java.io.IOException
 
 sealed class HomeUiState {
@@ -22,6 +23,19 @@ class HomeViewModel (private val mhs: MahasiswaRepository): ViewModel(){
 
     init {
         getMhs()
+    }
+
+    fun getMhs(){
+        viewModelScope.launch {
+            mhsUiState = HomeUiState.Loading
+            mhsUiState = try {
+                HomeUiState.Success(mhs.getMahasiswa())
+            }catch (e:Exception) {
+                HomeUiState.Error
+            }catch (e:Exception) {
+                HomeUiState.Error
+            }
+        }
     }
 }
 
