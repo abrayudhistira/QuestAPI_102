@@ -10,6 +10,15 @@ class InsertViewModel(private val mhs: MahasiswaRepository) : ViewModel() {
     private set
 }
 
+fun InsertUiEvent.toMhs():Mahasiswa = Mahasiswa(
+    nim = nim,
+    nama = nama,
+    alamat = alamat,
+    jenisKelamin = jenisKelamin,
+    kelas = kelas,
+    angkatan = angkatan
+)
+
 fun Mahasiswa.toUiStateMhs(): InsertUiState = InsertUiEvent(
     insertUiEvent = toInsertUiEvent()
 )
