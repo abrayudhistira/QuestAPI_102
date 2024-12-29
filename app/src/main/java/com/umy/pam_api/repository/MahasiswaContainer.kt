@@ -11,7 +11,7 @@ interface AppContainer{
 }
 
 class MahasiswaKontainer: AppContainer{
-    private val  baseurl = "http://10.0.2.2:8080/umyTI/"
+    private val  baseurl = "http://icoass.com/apiforpam/" //http://10.0.2.2:8080/umyTI/ untuk lokal
     private val json = Json { ignoreUnknownKeys = true }
     private val retrofit: Retrofit = Retrofit.Builder()
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
