@@ -8,6 +8,10 @@ import com.umy.pam_api.repository.MahasiswaRepository
 class InsertViewModel(private val mhs: MahasiswaRepository) : ViewModel() {
     var uiState by mutableStateOf(InsertUiState())
     private set
+
+    fun updateInsertMhsState(insertUiState: InsertUiState) {
+        uiState = InsertUiState(insertUiState = insertUiState)
+    }
 }
 
 data class InsertUiState(
