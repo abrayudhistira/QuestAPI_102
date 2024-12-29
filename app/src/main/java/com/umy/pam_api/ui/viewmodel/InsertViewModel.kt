@@ -10,6 +10,10 @@ class InsertViewModel(private val mhs: MahasiswaRepository) : ViewModel() {
     private set
 }
 
+data class InsertUiState(
+    val insertUiState: InsertUiState = InsertUiEvent
+)
+
 data class InsertUiEvent(
     val nim:String = "",
     val nama:String = "",
