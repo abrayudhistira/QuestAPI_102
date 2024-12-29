@@ -13,8 +13,8 @@ class InsertViewModel(private val mhs: MahasiswaRepository) : ViewModel() {
     var uiState by mutableStateOf(InsertUiState())
     private set
 
-    fun updateInsertMhsState(insertUiState: InsertUiState) {
-        uiState = InsertUiState(insertUiState = insertUiState)
+    fun updateInsertMhsState(insertUiEvent: InsertUiEvent) {
+        uiState = InsertUiState(insertUiEvent = insertUiEvent)
     }
 
     suspend fun insertMhs() {
@@ -50,7 +50,7 @@ fun InsertUiEvent.toMhs():Mahasiswa = Mahasiswa(
     angkatan = angkatan
 )
 
-fun Mahasiswa.toUiStateMhs(): InsertUiState = InsertUiEvent(
+fun Mahasiswa.toUiStateMhs(): InsertUiState = InsertUiState(
     insertUiEvent = toInsertUiEvent()
 )
 
