@@ -13,7 +13,7 @@ interface AppContainer {
 }
 
 class MahasiswaContainer : AppContainer {
-    private val baseUrl = ""
+    private val baseUrl = "https://icoass.com/apiforpam/" //http://10.0.2.2:8080/umyTI/ untuk lokal
     private val json = Json { ignoreUnknownKeys = true}
     private val retrofit: Retrofit = Retrofit.Builder()
 
