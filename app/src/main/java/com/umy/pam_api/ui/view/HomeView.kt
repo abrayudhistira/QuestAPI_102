@@ -17,9 +17,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -42,6 +44,7 @@ import com.umy.pam_api.ui.navigasi.CostumeTopAppBar
 import com.umy.pam_api.ui.navigasi.DestinasiNavigasi
 import com.umy.pam_api.ui.viewmodel.HomeUiState
 import com.umy.pam_api.ui.viewmodel.HomeViewModel
+import com.umy.pam_api.ui.viewmodel.PenyediaViewModel
 
 object DestinasiHome: DestinasiNavigasi {
     override val route ="home"
@@ -53,7 +56,7 @@ object DestinasiHome: DestinasiNavigasi {
 @Composable
 fun HomeScreen(
     navigateToItemEntry:()->Unit,
-    modifier: Modifier=Modifier,
+    modifier: Modifier = Modifier,
     onDetailClick: (String) -> Unit ={},
     viewModel: HomeViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ){
@@ -82,11 +85,13 @@ fun HomeScreen(
     ) { innerPadding->
         HomeStatus(
             homeUiState = viewModel.mhsUiState,
-            retryAction = {viewModel.getMhs()}, modifier = Modifier.padding(innerPadding),
-            onDetailClick = onDetailClick,onDeleteClick = {
+            retryAction = {viewModel.getMhs()},
+            modifier = Modifier.padding(innerPadding),
+            onDetailClick = onDetailClick,
+            onDeleteClick = {
                 viewModel.deleteMhs(it.nim)
                 viewModel.getMhs()
-            }
+            },
         )
     }
 }
@@ -106,11 +111,12 @@ fun HomeStatus(
         is HomeUiState.Success ->
             if(homeUiState.mahasiswa.isEmpty()){
                 return Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-                    Text(text = "Tidak ada data kontak")
+                    Text(text = "Tidak ada data kontak", style = MaterialTheme.typography.bodyMedium)
                 }
             }else{
                 MhsLayout(
-                    mahasiswa = homeUiState.mahasiswa,modifier = modifier.fillMaxWidth(),
+                    mahasiswa = homeUiState.mahasiswa,
+                    modifier = modifier.fillMaxWidth(),
                     onDetailClick = {
                         onDetailClick(it.nim)
                     },
@@ -124,29 +130,29 @@ fun HomeStatus(
 }
 
 @Composable
-fun OnLoading(modifier: Modifier = Modifier){
-    Image(
-        modifier = modifier.size(200.dp),
-        painter = painterResource(R.drawable.no_wifi),
-        contentDescription = stringResource(R.string.loading)
-    )
+fun OnLoading(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Image(
+            modifier = Modifier.size(200.dp),
+            painter = painterResource(R.drawable.no_wifi),
+            contentDescription = stringResource(R.string.loading)
+        )
+    }
 }
 
 @Composable
-fun OnError(retryAction:()->Unit, modifier: Modifier = Modifier){
-    Column(
-        modifier=modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.no_wifi), contentDescription = ""
-        )
-
-
-        Text(text = stringResource(R.string.loading_failed), modifier = Modifier.padding(16.dp))
-        Button(onClick = retryAction) {
-            Text(stringResource(R.string.retry))
+fun OnError(retryAction: () -> Unit, modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Image(painter = painterResource(id = R.drawable.no_wifi), contentDescription = "")
+            Text(text = stringResource(R.string.loading_failed), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(16.dp))
+            Button(onClick = retryAction) {
+                Text(stringResource(R.string.retry))
+            }
         }
     }
 }
@@ -155,23 +161,21 @@ fun OnError(retryAction:()->Unit, modifier: Modifier = Modifier){
 fun MhsLayout(
     mahasiswa: List<Mahasiswa>,
     modifier: Modifier = Modifier,
-    onDetailClick:(Mahasiswa)->Unit,
+    onDetailClick: (Mahasiswa) -> Unit,
     onDeleteClick: (Mahasiswa) -> Unit = {}
-){
+) {
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(mahasiswa){ mahasiswa ->
+        items(mahasiswa) { mahasiswa ->
             MhsCard(
                 mahasiswa = mahasiswa,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable{onDetailClick(mahasiswa)},
-                onDeleteClick ={
-                    onDeleteClick(mahasiswa)
-                }
+                    .clickable { onDetailClick(mahasiswa) },
+                onDeleteClick = { onDeleteClick(mahasiswa) }
             )
         }
     }
@@ -182,16 +186,18 @@ fun MhsLayout(
 fun MhsCard(
     mahasiswa: Mahasiswa,
     modifier: Modifier = Modifier,
-    onDeleteClick:(Mahasiswa)->Unit={}
-){
+    onDeleteClick: (Mahasiswa) -> Unit = {},
+    onEditClick: (Mahasiswa) -> Unit = {}
+) {
     Card(
         modifier = modifier,
         shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -202,29 +208,45 @@ fun MhsCard(
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(Modifier.weight(1f))
-                IconButton(onClick = {onDeleteClick(mahasiswa)}) {
+
+                // Delete Button
+                IconButton(onClick = { onDeleteClick(mahasiswa) }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = null,
+                        contentDescription = "Delete Mahasiswa",
+                        tint = MaterialTheme.colorScheme.error
                     )
                 }
 
-
-                Text(
-                    text = mahasiswa.nim,
-                    style = MaterialTheme.typography.titleMedium
-                )
+                // Edit Button
+                IconButton(onClick = { onEditClick(mahasiswa) }) {
+                    Icon(
+                        imageVector = Icons.Default.Edit, // You can use a built-in edit icon or a custom one
+                        contentDescription = "Edit Mahasiswa",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
 
+            Divider()
 
-            Text(
-                text = mahasiswa.kelas,
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = mahasiswa.alamat,
-                style = MaterialTheme.typography.titleMedium
-            )
+            Column {
+                Text(
+                    text = "NIM: ${mahasiswa.nim}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "Kelas: ${mahasiswa.kelas}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "Alamat: ${mahasiswa.alamat}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
         }
     }
 }

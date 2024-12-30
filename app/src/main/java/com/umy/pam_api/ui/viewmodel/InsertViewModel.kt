@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class InsertViewModel(private val mhs: MahasiswaRepository) : ViewModel() {
     var uiState by mutableStateOf(InsertUiState())
-    private set
+        private set
 
     fun updateInsertMhsState(insertUiEvent: InsertUiEvent) {
         uiState = InsertUiState(insertUiEvent = insertUiEvent)
@@ -29,7 +29,9 @@ class InsertViewModel(private val mhs: MahasiswaRepository) : ViewModel() {
 }
 
 data class InsertUiState(
-    val insertUiEvent : InsertUiEvent = InsertUiEvent()
+    val insertUiEvent : InsertUiEvent = InsertUiEvent(),
+    val error: String? = null
+
 )
 
 data class InsertUiEvent(

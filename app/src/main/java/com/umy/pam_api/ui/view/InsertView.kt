@@ -25,6 +25,7 @@ import com.umy.pam_api.ui.navigasi.DestinasiNavigasi
 import com.umy.pam_api.ui.viewmodel.InsertUiEvent
 import com.umy.pam_api.ui.viewmodel.InsertUiState
 import com.umy.pam_api.ui.viewmodel.InsertViewModel
+import com.umy.pam_api.ui.viewmodel.PenyediaViewModel
 import kotlinx.coroutines.launch
 
 object DestinasiEntry: DestinasiNavigasi {
@@ -76,7 +77,7 @@ fun EntryBody(
     insertUiState: InsertUiState,
     onSiswaValueChange:(InsertUiEvent)->Unit,
     onSaveClick:()->Unit,
-    modifier: Modifier=Modifier
+    modifier: Modifier = Modifier
 ){
     Column(
         verticalArrangement = Arrangement.spacedBy(18.dp),
@@ -87,7 +88,6 @@ fun EntryBody(
             onValueChange = onSiswaValueChange,
             modifier = Modifier.fillMaxWidth()
         )
-
 
         Button(
             onClick = onSaveClick,
@@ -103,7 +103,7 @@ fun EntryBody(
 @Composable
 fun FormInput(
     insertUiEvent: InsertUiEvent,
-    modifier: Modifier =Modifier,
+    modifier: Modifier = Modifier,
     onValueChange:(InsertUiEvent)->Unit = {},
     enabled: Boolean = true
 ){
